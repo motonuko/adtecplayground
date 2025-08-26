@@ -2,6 +2,7 @@ import os
 import json
 import random
 import argparse
+import glob
 
 import numpy as np
 import torch
@@ -33,6 +34,19 @@ def create_optimizer(self):
     if self.optimizer is None:
         self.optimizer = Adam(self.model.parameters(), lr=self._lr)
     return self.optimizer
+
+
+def cleanup_model_files(output_dir: str):
+    targets = ["model.safetensors", "optimizer.pt"]
+    for filename in targets:
+        for path in glob.glob(os.path.join(output_dir, "**", filename), recursive=True):
+            try:
+                os.remove(path)
+                print(f"Deleted: {path}")
+            except OSError as e:
+                print(f"Error deleting {path}: {e}")
+
+
 
 
 def main():
@@ -118,6 +132,8 @@ def main():
             results.append(summary)
             if best_run is None or summary["val_f1"] > best_run["val_f1"]:
                 best_run = summary
+
+            cleanup_model_files(args.output_dir)  # to save space
 
     print("===== Runs Summary (sorted by val_f1) =====")
     for row in sorted(results, key=lambda x: x["val_f1"], reverse=True):
