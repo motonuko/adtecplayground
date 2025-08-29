@@ -18,6 +18,6 @@ class AdtecConfig:
     warmup_ratio: float = 0.0
     weight_decay: float = 0.0
     gradient_accumulation_steps: int = 1
-    output_dir: str = "./runs/adtec-bert-v2"
+    output_dir: str = "../runs/adtec-bert-v2"
     fp16: bool = True
     save_total_limit: int = 2
